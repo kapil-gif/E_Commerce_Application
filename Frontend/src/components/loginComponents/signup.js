@@ -3,42 +3,65 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./signup.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-export default function Signup({ handleSignup }) {
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+export default function Signup() {
     const [firstname, setFirstName] = useState("");
     const [lastname, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [mobile_no, setMobile] = useState("");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
-    const [roleId] = useState("2"); // Default role
+    const [roleId] = useState("2"); // Default role (customer)
     const navigate = useNavigate();
+
+    const validatePasswordStrength = (pwd) => {
+        // At least 8 characters, one uppercase, one lowercase, one number, one special char
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        return regex.test(pwd);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (password !== confirm) {
+            toast.error("Passwords do not match");
+            return;
+        }
+
+        if (!validatePasswordStrength(password)) {
+            toast.error("Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.");
+            return;
+        }
+
         try {
-            if (password !== confirm) {
-                alert("Passwords must match");
-                return;
-            }
+            const res = await axios.post("http://localhost:8080/user/signup", {
+                firstname,
+                lastname,
+                mobile_no,
+                email,
+                password,
+                roleId
+            });
 
-            const res = await axios.post(
-                'http://localhost:8080/user/signup',
-                {
-                    firstname,
-                    lastname,
-                    mobile_no,
-                    email,
-                    password,
-                    roleId // Send role to backend
-                }
-            );
+            toast.success("Account created successfully!", {
+                onClose: () => navigate("/login"),
+                autoClose: 2000
+            });
 
-            alert("Account created successfully!");
-            navigate("/login");
-            // Optionally call a callback
-            // handleSignup({ firstname, lastname, email, mobile_no, password, role });
         } catch (err) {
-            console.error("API error:", err.response || err);
-            alert("Signup failed: " + (err.response?.data?.message || err.message));
+            const message =
+                err.response?.data?.message || err.message;
+
+            if (message.includes("duplicate")) {
+                toast.error("Email or mobile already registered.");
+            } if (message.code == 'ER_DUP_ENTRY') {
+                toast.error("Email or mobile already registered.");
+            } else {
+
+                toast.error("Signup failed: " + message);
+            }
         }
     };
 
@@ -113,8 +136,6 @@ export default function Signup({ handleSignup }) {
                     />
                 </div>
 
-                {/* No need to show role field in UI. Default is customer. */}
-
                 <button type="submit" className="btn btn-primary btn-lg w-100">
                     Sign Up
                 </button>
@@ -123,6 +144,8 @@ export default function Signup({ handleSignup }) {
                     Already have an account? <a href="/login">Sign in</a>
                 </p>
             </form>
+
+            <ToastContainer position="top-right" />
         </div>
     );
 }

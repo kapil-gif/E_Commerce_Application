@@ -4,47 +4,47 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Navbar from "../Navbar/Navbar";
 
-function PendingUsers() {
+function UserList() {
     const [users, setUsers] = useState([]);
 
-    // const fetchPendingUsers = async () => {
-    //     const token = localStorage.getItem("authtoken");
+    const fetchPendingUsers = async () => {
+        const token = localStorage.getItem("authtoken");
 
-    //     try {
-    //         const res = await axios.get("http://localhost:8080/admin/pending-users", {
-    //             headers: { Authorization: `Bearer ${token}` }
-    //         });
-    //         setUsers(res.data.users || []);
-    //     } catch (error) {
-    //         console.error("Failed to fetch users:", error);
-    //         toast.error("Could not fetch pending users");
-    //     }
-    // };
+        try {
+            const res = await axios.get("http://localhost:8080/admin/pending-users", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUsers(res.data.users || []);
+        } catch (error) {
+            console.error("Failed to fetch users:", error);
+            toast.error("Could not fetch pending users");
+        }
+    };
 
-    // // const activateUser = async (id) => {
-    // //     const token = localStorage.getItem("authtoken");
+    const activateUser = async (id) => {
+        const token = localStorage.getItem("authtoken");
 
-    // //     try {
-    // //         await axios.put(`http://localhost:8080/admin/activate-user/${id}`, {}, {
-    // //             headers: { Authorization: `Bearer ${token}` }
-    // //         });
+        try {
+            await axios.put(`http://localhost:8080/admin/activate-user/${id}`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-    // //         toast.success("User activated successfully");
-    // //         fetchPendingUsers(); // Refresh list
-    // //     } catch (error) {
-    // //         console.error("Error activating user:", error);
-    // //         toast.error("Failed to activate user");
-    // //     }
-    // // };
+            toast.success("User activated successfully");
+            fetchPendingUsers(); // Refresh list
+        } catch (error) {
+            console.error("Error activating user:", error);
+            toast.error("Failed to activate user");
+        }
+    };
 
-    // useEffect(() => {
-    //     fetchPendingUsers();
-    // }, []);
+    useEffect(() => {
+        fetchPendingUsers();
+    }, []);
 
     return (
         <>
             <Navbar fixedTop={true} />
-            {/* <div className="container mt-5 pt-5">
+            <div className="container mt-5 pt-5">
                 <h2 className="mb-4">Pending Users</h2>
                 {users.length === 0 ? (
                     <p>No pending users.</p>
@@ -79,9 +79,9 @@ function PendingUsers() {
                         </tbody>
                     </table>
                 )}
-            </div> */}
+            </div>
         </>
     );
 }
 
-export default PendingUsers;
+export default UserList;

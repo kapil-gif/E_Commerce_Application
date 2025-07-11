@@ -25,6 +25,8 @@ function Dashboard() {
 
     const navigate = useNavigate();
 
+
+
     const showCustomLoader = () => {
         document.getElementById('custom-loader').style.display = 'flex';
     };
@@ -37,6 +39,10 @@ function Dashboard() {
         let isCalled = false;
         const storedUserId = localStorage.getItem("userId");
         const storedToken = localStorage.getItem("authtoken");
+        const userPermissions = localStorage.getItem("userPermissions");
+
+
+        //console.log("userPermissions in dhasbard :", userPermissions);
 
         if (!storedUserId || !storedToken) {
             navigate("/login");

@@ -14,10 +14,11 @@ function LoginForm() {
         e.preventDefault();
 
         const getuser = { email, password };
+        //console.log("login data user :", getuser);
 
         try {
             const response = await axios.post("http://localhost:8080/user/login", getuser);
-            // console.log("login api responce response.data.data.rolle_id:", response.data);
+            //console.log("login api responce response.data.data.rolle_id:", response.data);
             const roleId = response.data.data.role_id;
             const { token, data, message } = response.data;
 
@@ -25,32 +26,37 @@ function LoginForm() {
                 toast.error("Invalid login response");
                 return;
             }
-            //console.log("rolede id calling api :", roleId);
+            // console.log("permissions calling api :", response.data.data.permissions);
 
-            const findRoleresponse = await axios.get(`http://localhost:8080/admin/role`, {
-                params: { roleId },
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            // const findRoleresponse = await axios.get(`http://localhost:8080/admin/role`, {
+            //     params: { roleId },
+            //     headers: {
+            //         Authorization: `Bearer ${token}`
+            //     }
+            // });
             //console.log("api find role api :", findRoleresponse.data.role);
 
 
             const user_Id = data.id;
-            const userRole = findRoleresponse.data.role;
-            // console.log("userRole frontend login form :", user_Id);
+            const userRole = response.data.data.role;
+            const userPermissions = response.data.data.permissions;
+            //console.log("User userPermissions:", userPermissions);
 
-            // Save to localStorage
             localStorage.setItem("authtoken", token);
-            localStorage.setItem("user_Id", user_Id);
+            localStorage.setItem("userId", user_Id);
             localStorage.setItem("userRole", userRole);
-
+            localStorage.setItem("userPermissions", JSON.stringify(userPermissions));
             toast.success(message);
 
-            // Redirect based on role (optional)
-            if (userRole === "admin") {
-                navigate("/dashboard");
-            } else if (userRole === "customer") {
+            // setTimeout(() => {
+            //     window.location.href = "/dashboard";  // full reload to re-evaluate ProtectRoute
+            // }, 100);
+
+            //navigate("/dashboard");
+            if (userRole?.toLowerCase().trim() === "admin") {
+                navigate("/admin/userlist");
+            } else if (userRole?.toLowerCase().trim() === "customer") {
+                console.log("in Custmor ");
                 navigate("/dashboard");
             } else {
                 toast.error("Unknown role. Contact support.");
