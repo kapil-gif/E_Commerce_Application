@@ -1,0 +1,45 @@
+/* Disable pointer interaction while loading */
+#nprogress {
+    pointer-events: none;
+}
+
+/* Hide the default top bar */
+#nprogress .bar {
+    display: none !important;
+}
+
+/* Center the circular spinner */
+#nprogress .spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Spinner icon styling */
+#nprogress .spinner-icon {
+    width: 60px;
+    height: 60px;
+    box-sizing: border-box;
+    border: 5px solid transparent;
+    border-top-color: #3498db;
+    border-left-color: #3498db;
+    border-radius: 50%;
+    animation: nprogress-spinner 0.7s linear infinite;
+    background-color: transparent;
+}
+
+/* Spinner animation */
+@keyframes nprogress-spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

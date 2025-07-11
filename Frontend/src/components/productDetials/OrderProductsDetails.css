@@ -1,0 +1,16 @@
+.product-img {
+    height: 160px;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.product-item:hover {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.order-summary {
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+}

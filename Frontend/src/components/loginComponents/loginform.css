@@ -1,0 +1,23 @@
+.login-page {
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+}
+
+.login-form {
+    max-width: 380px;
+    width: 100%;
+}
+
+.login-form input {
+    border-radius: 1rem;
+}
+
+.login-form button {
+    border-radius: 1rem;
+    font-weight: 600;
+}
+
+/* Optional: subtle hover effect */
+.login-form button:hover {
+    background-color: #3f47a1;
+    transition: background-color 0.3s ease;
+}
