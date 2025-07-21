@@ -117,3 +117,20 @@
     overflow: hidden;
     /* hide overflow content if necessary */
 }
+
+
+.empty-cart-wrapper {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.empty-cart-img {
+    transform: scale(1.05);
+    transition: transform 0.5s ease;
+}
+
+.empty-cart-img:hover {
+    transform: scale(1.15);
+}

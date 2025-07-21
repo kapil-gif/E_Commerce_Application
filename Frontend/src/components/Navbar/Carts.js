@@ -176,12 +176,25 @@ function Carts() {
             <Navbar fixedTop={true} />
 
             {Cartproducts.length === 0 ? (
-                <p className="text-center mt-5">No products in cart.</p>
+                <div className="empty-cart-wrapper d-flex flex-column justify-content-center align-items-center vh-100 text-center">
+                    <img
+                        src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-2130356-1800917.png"
+                        alt="Empty Cart"
+                        className="empty-cart-img mb-4 animate__animated animate__fadeInDown"
+                        style={{ width: "300px", maxWidth: "90%" }}
+                    />
+                    <h2 className="fw-bold animate__animated animate__fadeInUp animate__delay-1s">Your cart is empty!</h2>
+                    <p className="text-muted animate__animated animate__fadeInUp animate__delay-2s">
+                        Looks like you haven’t added anything to your cart yet.
+                    </p>
+                    <a href="/dashboard" className="btn btn-outline-primary mt-3 animate__animated animate__zoomIn animate__delay-3s">
+                        Shop Now
+                    </a>
+                </div>
             ) : (
-                <div className="cart-container container mt-4 justify-content-between d-flex ">
-
+                <div className="cart-container container mt-4 justify-content-between d-flex">
                     <div className="col-9">
-                        <table className="table table-striped table-bordered w-200">
+                        <table className="table table-striped table-bordered w-200 shadow-lg bg-white rounded-4 overflow-hidden">
                             <thead className="table-dark">
                                 <tr>
                                     <th>
@@ -213,6 +226,7 @@ function Carts() {
                                             <img
                                                 src={Array.isArray(product.img) ? product.img[0] : product.img}
                                                 alt={product.title}
+                                                className="rounded shadow-sm"
                                                 style={{ width: "60px", height: "60px", objectFit: "cover" }}
                                             />
                                         </td>
@@ -236,23 +250,22 @@ function Carts() {
                     </div>
 
                     {selectedProductIds.length > 0 && (
-                        <div className="order-summary-box alert alert-primary d-flex flex-column justify-content-between align-items-start mt-3">
+                        <div className="order-summary-box alert alert-primary d-flex flex-column justify-content-between align-items-start mt-3 rounded-4 shadow-lg p-4 h-100 animate__animated animate__fadeInRight">
                             <div>
-                                <h5>Order Summary</h5>
+                                <h5 className="fw-bold">Order Summary</h5>
                                 <p>Items: {selectedProductIds.length}</p>
                                 <p>Total Qty: {totalQuantity}</p>
-                                <p>Price: ₹{selectedTotalPrice.toFixed(2)}</p>
+                                <p>Total Price: ₹{selectedTotalPrice.toFixed(2)}</p>
                             </div>
                             <button onClick={orderartIteams} className="btn btn-success w-100 mt-2">
                                 Buy Now
                             </button>
                         </div>
                     )}
-
-
                 </div>
             )}
 
+            {/* Modal */}
             <div className="modal fade" id="confirmModal" tabIndex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
@@ -272,6 +285,7 @@ function Carts() {
             </div>
         </div>
     );
+
 }
 
 export default Carts;

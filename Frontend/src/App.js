@@ -3,6 +3,9 @@ import { useState, useEffect, createContext } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
+//import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 
 import LoginForm from './components/loginComponents/loginForm';
 import Signup from "./components/loginComponents/signup";
@@ -19,6 +22,10 @@ import AddProduct from "./components/AddProduct/addproduct";
 import PendingUsers from "./components/Admincomponents/PendingUsers";
 import { ProtectRoute } from "./components/ProtectRoutes/ProtectRoute";
 import UserList from "./components/Admincomponents/UserList"
+import AdminProduct from "./components/Admincomponents/AdminProduct"
+import AllUserList from "./components/Admincomponents/AllUserList";
+import Passwordforeget from "./components/PasswordForget";
+import MapComponent from "./components/Mapcomponent/Mapcomponents";
 export const SearchContext = createContext();
 
 function App() {
@@ -33,6 +40,7 @@ function App() {
       if (!user_Id || !token) return;
 
       try {
+        // const { data } = await axios.get(API.PRODUCT.FETCH, {
         const { data } = await axios.get("http://localhost:8080/products/fetchcart", {
           headers: { Authorization: `Bearer ${token}` },
           params: { user_id: user_Id },
@@ -75,6 +83,10 @@ function App() {
               <Route path="/addproduct" element={<ProtectRoute ><AddProduct /></ProtectRoute>} />
               <Route path="/admin/pending-users" element={<ProtectRoute allowedRoles={["admin"]}><PendingUsers /></ProtectRoute>} />
               <Route path="/admin/userlist" element={<ProtectRoute> <UserList /> </ProtectRoute>} />
+              <Route path="/admin/myporducts" element={<ProtectRoute> <AdminProduct /></ProtectRoute>} />
+              <Route path="/admin/allusers" element={<ProtectRoute> <AllUserList /></ProtectRoute>} />
+              <Route path="/password/forget" element={<Passwordforeget />} />
+              <Route path="/map_location" element={<ProtectRoute><MapComponent /></ProtectRoute>} />
             </Routes>
           </BrowserRouter>
         </CartContext.Provider>

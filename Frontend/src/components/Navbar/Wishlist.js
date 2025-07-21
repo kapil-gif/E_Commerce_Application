@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
-
+import "./wishlist.css"
 function Wishlist() {
     const [allProducts, setAllProducts] = useState([]);
     const [wishlistProductIds, setWishlistProductIds] = useState([]);
@@ -68,51 +68,63 @@ function Wishlist() {
     return (
         <>
             <Navbar fixedTop={true} />
-            <div className="container mt-4 " >
+            <div className="container mt-4">
+                {allProducts.length === 0 ? (
+                    <div className="empty-wishlist d-flex flex-column align-items-center justify-content-center text-center">
+                        <img
+                            src="https://cdn.dribbble.com/userupload/20690016/file/original-a6f6e18b0fba708e37637f70157b28c8.gif"
+                            alt="Empty Wishlist"
+                            className="empty-animation"
+                        />
+                        <h3 className="mt-4">Your wishlist is empty</h3>
+                        <p className="text-muted">Start adding items you love 💖</p>
+                    </div>
+                ) : (
+                    <div className="row">
+                        {allProducts.map((item, index) => {
+                            const productId = String(item.id || item._id);
+                            const isWishlisted = wishlistProductIds.includes(productId);
 
-                <div className="row">
-                    {allProducts.map((item, index) => {
-                        const productId = String(item.id || item._id);
-                        const isWishlisted = wishlistProductIds.includes(productId);
+                            return (
+                                <div key={index} className="col-md-4 col-sm-6 mb-4">
+                                    <div className="card h-100 shadow-sm">
+                                        <img
+                                            src={
+                                                Array.isArray(item.img)
+                                                    ? item.img[0]
+                                                    : typeof item.img === "string"
+                                                        ? JSON.parse(item.img)[0]
+                                                        : "https://via.placeholder.com/250"
+                                            }
+                                            className="card-img-top"
+                                            alt={item.title}
+                                            style={{ objectFit: "cover", height: "250px" }}
+                                        />
 
-                        return (
-                            <div key={index} className="col-md-4 col-sm-6 mb-4">
-                                <div className="card h-100 shadow-sm">
-                                    <img
-                                        src={
-                                            Array.isArray(item.img)
-                                                ? item.img[0]
-                                                : typeof item.img === "string"
-                                                    ? JSON.parse(item.img)[0]
-                                                    : "https://via.placeholder.com/250"
-                                        }
-                                        className="card-img-top"
-                                        alt={item.title}
-                                        style={{ objectFit: "cover", height: "250px" }}
-                                    />
-
-                                    <div className="card-body d-flex flex-column">
-                                        <h5 className="card-title">{item.title}</h5>
-                                        <p className="card-text">Price: ₹{item.price}</p>
-                                        <p className="card-text">Category: {item.category}</p>
-                                        <div className="mt-auto d-flex justify-content-end">
-                                            <i
-                                                className={`fa${isWishlisted ? 's' : 'r'} fa-heart`}
-                                                style={{
-                                                    color: isWishlisted ? "red" : "#ccc",
-                                                    fontSize: "20px",
-                                                    cursor: "pointer"
-                                                }}
-                                                onClick={() => toggleWishlist(productId)}
-                                            ></i>
+                                        <div className="card-body d-flex flex-column">
+                                            <h5 className="card-title">{item.title}</h5>
+                                            <p className="card-text">Price: ₹{item.price}</p>
+                                            <p className="card-text">Category: {item.category}</p>
+                                            <div className="mt-auto d-flex justify-content-end">
+                                                <i
+                                                    className={`fa${isWishlisted ? 's' : 'r'} fa-heart`}
+                                                    style={{
+                                                        color: isWishlisted ? "red" : "#ccc",
+                                                        fontSize: "20px",
+                                                        cursor: "pointer"
+                                                    }}
+                                                    onClick={() => toggleWishlist(productId)}
+                                                ></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
+
 
         </>
     );

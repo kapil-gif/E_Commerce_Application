@@ -1,4 +1,5 @@
 import { productOrder, fetchMyorder, comformationOrder, insertorderdata, fetchsigledataorder, orderCancle, removeCartorderSuccesss } from "../models/order.model.js"
+import { sendEmailToUser } from "../utils/sendEmail.js"
 
 export const orderAllproduct = async (req, res) => {
     try {
@@ -99,67 +100,80 @@ export const fetchorder = async (req, res) => {
 
 export const comformorder = async (req, res) => {
     try {
-        const detials = req.body;
-        // console.log("detils order in controlers : ", detials);
-        // const user_id = detials.userd;
-        // const total_amount = detials.total_amount;
-        // const payment_method = detials.payment_method;
-        // const shipping_address = detials.shipping_address;
-        // const billing_address = detials.billing_address;
+        const details = req.body;
+        // console.log("req body", req.body);
 
-        // console.log(`user_id: ${user_id}, total_amount: ${total_amount}, payment_method: ${payment_method}, shipping_address: ${shipping_address}, billing_address: ${billing_address}`);
+        const responce = await comformationOrder(details);
 
-        const responce = await comformationOrder(detials);
         if (responce) {
-            //   console.log("responce APi confromation calling api  : ", responce);
+            // const emailData = {
+            //     // pass all cart products
+            //     product_adresss: {
+            //         shipping_address: details.shipping_address,
+            //         billing_address: details.billing_address,
+            //         payment_method: details.payment_method,
+            //         total_amount: details.total_amount
+            //     }
+            // };
+            // console.log("email deta :", emailData);
 
-            res.status(200).json({
+            // await sendEmailToUser(emailData);
+
+            return res.status(200).json({
                 success: true,
                 code: "200",
-                message: "Your order succefully",
+                message: "Your order successfully placed",
                 responce
-            })
+            });
         }
     } catch (error) {
-        console.log("comfromation Order error : ", error);
+        console.log("Confirmation Order error: ", error);
         res.status(500).json({
             success: false,
             code: "500",
-            message: "Your order not succefully",
-            responce
-        })
+            message: "Your order was not successful",
+            error
+        });
     }
-}
+};
+
 
 export const insertorder = async (req, res) => {
-    //console.log(" req body controller : ", req.body);
-
     try {
         let items = req.body;
-        if (!Array.isArray(items)) {
-            items = [items];
-        }
+        // console.log("req body insert he order: ", req.body);
+
+        if (!Array.isArray(items)) items = [items];
         if (items.length === 0) {
             return res.status(400).json({ success: false, message: "No order items" });
         }
 
         const results = [];
+
         for (const item of items) {
-            //  console.log("Inserting item in controller :", item);
+            console.log("temas of insertorder :", item);
+
             const result = await insertorderdata(item);
-            //results.push(result);
+            results.push(result); // collect each insert result
+
+            // Optional: Send one email per item, or combine later
+            await sendEmailToUser(result.fulluserdata);
         }
 
+        // Respond after all items are inserted
         return res.status(200).json({
             success: true,
             message: "Order items inserted successfully",
             data: results
         });
+
     } catch (error) {
         console.error("Insert order items error:", error);
         return res.status(500).json({ success: false, message: "Order not successful", error });
     }
 };
+
+
 
 export const fetchsingleorder = async (req, res) => {
     try {

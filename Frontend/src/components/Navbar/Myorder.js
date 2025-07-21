@@ -4,14 +4,10 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import './myorder.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import * as bootstrap from 'bootstrap';
-
-import NProgress from "nprogress";
-import "nprogress/nprogress.css";
-import "../../nprogress-custom.css"; // Spinner CSS
 
 function Myorder() {
     window.bootstrap = bootstrap;
@@ -20,11 +16,12 @@ function Myorder() {
 
     const [orders, setOrders] = useState([]);
     const [orderToCancel, setOrderToCancel] = useState(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const fetchOrders = async () => {
         try {
-            NProgress.start();
+            setLoading(true);
             const res = await axios.get("http://localhost:8080/products/fetchMyorder", {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { userid: user_id }
@@ -33,9 +30,9 @@ function Myorder() {
             setOrders(res.data.orders || []);
         } catch (err) {
             console.error("Error fetching orders:", err);
-            alert(err.response?.data?.message || "Failed to fetch orders");
+            toast.info(err.response?.data?.message || "Failed to fetch orders");
         } finally {
-            NProgress.done();
+            setLoading(false);
         }
     };
 
@@ -45,24 +42,19 @@ function Myorder() {
 
     const confirmRemove = (orderId) => {
         setOrderToCancel(orderId);
-
         const modal = new window.bootstrap.Modal(document.getElementById("confirmModal"));
-
         modal.show();
     };
 
     const handleConfirmCancel = () => {
         if (!orderToCancel) return;
-
         handleCancelOrder(orderToCancel);
         setOrderToCancel(null);
     };
 
     const handleCancelOrder = async (orderId) => {
         try {
-            NProgress.start();
-            //console.log("order id in frontend :", orderId);
-
+            setLoading(true);
             await axios.delete("http://localhost:8080/order/cancleorder", {
                 params: { orderId: orderId },
                 headers: { Authorization: `Bearer ${token}` }
@@ -71,15 +63,13 @@ function Myorder() {
             fetchOrders();
         } catch (error) {
             console.error("Cancel order failed:", error);
-            alert("Failed to cancel order");
+            toast.error("Failed to cancel order");
         } finally {
-            NProgress.done();
+            setLoading(false);
         }
     };
 
     const handleOrderDetails = (order) => {
-        // console.log("order id :", order.order_id);
-
         const secretKey = "your-secret-key";
         const encrypted = CryptoJS.AES.encrypt(String(order.order_id), secretKey).toString();
         const encoded = encodeURIComponent(encrypted);
@@ -89,6 +79,13 @@ function Myorder() {
     return (
         <>
             <Navbar fixedTop={true} />
+
+            {loading && (
+                <div className="loader-overlay">
+                    <div className="loader-spinner"></div>
+                </div>
+            )}
+
             <div className="container py-5" style={{ marginTop: "5rem" }}>
                 {orders.length > 0 ? (
                     orders.map((order) => (
@@ -104,7 +101,7 @@ function Myorder() {
                             <div
                                 className="d-flex justify-content-between align-items-center px-4 py-3 rounded-top-4"
                                 style={{
-                                    background: "linear-gradient(135deg,rgb(101, 155, 237),rgb(131, 214, 239))",
+                                    background: "linear-gradient(135deg, rgb(101, 155, 237), rgb(131, 214, 239))",
                                     color: "#fff",
                                     boxShadow: "inset 0 -2px 8px rgba(0, 0, 0, 0.1)",
                                 }}
@@ -203,11 +200,34 @@ function Myorder() {
                         </div>
                     ))
                 ) : (
-                    <div className="text-center py-5">
-                        <p className="text-muted fs-5">No orders found.</p>
+                    <div
+                        className="text-center py-5 animate__animated animate__fadeInUp"
+                        style={{
+                            background: "linear-gradient(145deg, #e0e5ec, #ffffff)",
+                            borderRadius: "20px",
+                            boxShadow: "20px 20px 60px #d1d9e6, -20px -20px 60px #ffffff",
+                            marginTop: "50px",
+                            padding: "60px 20px",
+                            transition: "all 0.4s ease",
+                        }}
+                    >
+                        <img
+                            src="https://cdn.dribbble.com/users/317817/screenshots/5587216/media/1a37c6c45bcd0d310a91ae4e20e8ed3c.gif"
+                            alt="Empty Orders"
+                            className="img-fluid mb-4"
+                            style={{ maxWidth: "300px" }}
+                        />
+                        <h3 className="fw-bold text-primary">You haven’t placed any orders yet!</h3>
+                        <p className="text-muted fs-5">
+                            When you do, they’ll appear right here. Let’s go shopping! 🛒
+                        </p>
+                        <a href="/dashboard" className="btn btn-primary btn-lg mt-3 px-4 rounded-3 shadow-sm">
+                            🛍️ Browse Products
+                        </a>
                     </div>
                 )}
 
+                {/* Cancel Order Modal */}
                 <div
                     className="modal fade"
                     id="confirmModal"

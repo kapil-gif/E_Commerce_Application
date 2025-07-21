@@ -1,0 +1,83 @@
+/* PendingUsers.css */
+
+.text-gradient {
+    background: linear-gradient(45deg, #ff6b6b, #5f27cd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn-glow {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-glow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 300%;
+    height: 100%;
+    background: radial-gradient(circle at center, #00ffae, #0077ff);
+    transition: 0.4s;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.btn-glow:hover::after {
+    left: 0;
+    opacity: 1;
+}
+
+.glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.table thead th {
+    background: linear-gradient(to right, #b078ec, #6c9ef3);
+    color: white;
+    border: none;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f5ff;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.text-gradient {
+    background: linear-gradient(90deg, #1d976c, #93f9b9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.glow:hover {
+    box-shadow: 0 0 12px rgba(0, 255, 150, 0.6);
+    transform: scale(1.02);
+    transition: all 0.2s ease-in-out;
+}
+
+
+.no-users-card {
+    max-width: 500px;
+    background: linear-gradient(135deg, #e0f7e9, #f5fff9);
+    border-radius: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.no-users-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.2);
+}

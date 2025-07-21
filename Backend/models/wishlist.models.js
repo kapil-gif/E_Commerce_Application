@@ -5,7 +5,7 @@ export function addtowishmodel(user_id, product_id) {
     //  const userid=user_id;
     //console.log("add to wish list product model ", user_id, product_id);
     return new Promise((resolve, reject) => {
-        pool.execute(addtowishlistquery, [user_id, product_id], (err, result) => {
+        pool.query(addtowishlistquery, [user_id, product_id], (err, result) => {
             if (err) {
                 console.log(" error in model add to wishlist", err);
                 return reject(err);

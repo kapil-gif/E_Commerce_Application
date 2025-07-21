@@ -1,18 +1,20 @@
 import express from "express"
 import dotenv from "dotenv"
-import userroutes from "./routes/user.route.js"
-import productsroutes from "./routes/products.route.js"
+import userroutes from "./routes/users/user.route.js"
+import productsroutes from "./routes/users/products.route.js"
 import cors from "cors";
-import Wishlistroutes from "./routes/wishlist.route.js";
-import orders from "./routes/order.routes.js"
-import profileupdate from "./routes/profile.routes.js";
-import addproduct from "./routes/addproduct.routes.js"
+import Wishlistroutes from "./routes/users/wishlist.route.js";
+import orders from "./routes/users/order.routes.js"
+import profileupdate from "./routes/users/profile.routes.js";
+import addproduct from "./routes/Admin/addproduct.routes.js"
 import path from "path"
 import { fileURLToPath } from "url";
-import admin from "./routes/admin.routes.js"
-//import adminRoutes from './routes/admin.routes.js'; // ✅ CORRECT
-
+import admin from "./routes/Admin/admin.routes.js"
+import paymentRoutes from "./routes/users/payments.route.js"
+import location from "./routes/users/location.routes.js"
+//import adminRoutes from './routes/admin.routes.js'; 
 //import { insertDummyProducts } from "./models/insertDummyApi.model.js";
+
 dotenv.config();//usingt the env file 
 
 const app = express();
@@ -34,6 +36,11 @@ app.use('/order', orders);
 app.use('/profile', profileupdate); //searchbox
 app.use('/addproduct', addproduct);
 app.use('/admin', admin);
+app.use("/api/payment", paymentRoutes);
+app.use('/location', location);
+
+
+
 
 app.listen(port, (req, res) => {
     console.log(`Server run on : http://localhost:${port}`);

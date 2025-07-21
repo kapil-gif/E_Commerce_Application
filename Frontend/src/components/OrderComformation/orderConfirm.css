@@ -1,104 +1,154 @@
-.order-page {
-    position: relative;
-    min-height: 100vh;
-    width: 100%;
+/* Fix full screen layout and stop scrolling */
+.order-confirmation-page {
+    height: 100vh;
     overflow: hidden;
+    background: radial-gradient(circle, #f0f9ff, #ffffff);
+    padding-top: 70px;
+    margin-top: 50px;
+    /* height of navbar */
 }
 
-/* background image now handled by ::before */
-.order-page::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('../../assets/order.jpg') no-repeat center center/cover;
-    filter: brightness(60%);
-    z-index: 0;
+/* Layout */
+.order-container {
+    display: flex;
+    height: calc(100vh - 70px);
 }
 
-/* overlay (optional) */
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    z-index: 1;
+/* Left side GIF */
+.gif-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
 }
 
-.order-card {
-    z-index: 2;
-    background-color: #fff;
-    border-radius: 16px;
+/* Right side Form */
+.form-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 2rem;
-    width: 100%;
-    max-width: 600px;
-    margin-left: 40px;
 }
 
-
-
-/* Full page background image */
-.order-page {
-    position: relative;
-    background: url('../../assets/order.jpg') no-repeat center center/cover;
-
-    min-height: 100vh;
-    width: 200vh;
-    overflow: hidden;
-}
-
-/* Dark overlay for contrast */
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
-}
-
-/* Card styling */
+/* Reuse your order card */
 .order-card {
-    z-index: 2;
-    background-color: #fff;
-    border-radius: 16px;
+    background: #ffffff;
+    border-radius: 20px;
     padding: 2rem;
-    width: 100%;
     max-width: 600px;
+    width: 100%;
+    transition: transform 0.3s ease;
 }
 
-.card-header {
-    background: linear-gradient(to right, #007bff, #00c6ff);
-    color: #fff;
+/* Header */
+.gradient-header {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    color: white;
+    padding: 1rem;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Inputs */
+.glass-input {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease;
+}
+
+.glass-input:focus {
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
+    border-color: #007bff;
+}
+
+/* Payment cards */
+.payment-option {
+    background: #f9f9f9;
+    border: 2px solid transparent;
+    padding: 1rem;
+    border-radius: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    flex: 1 1 180px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    user-select: none;
+}
+
+.payment-option:hover {
+    background-color: #eefaff;
+    border-color: #17a2b8;
+    transform: translateY(-2px);
+}
+
+.payment-option.active {
+    border-color: #00b09b;
+    background: #e6fdf4;
+}
+
+.payment-option .icon {
+    font-size: 1.5rem;
+}
+
+.payment-option .label {
+    font-weight: 500;
+}
+
+/* Confirm button */
+.btn-gradient {
+    background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+    border: none;
+    color: white;
     font-weight: bold;
-    font-size: 1.4rem;
-    text-align: center;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
 }
 
-textarea.form-control {
-    resize: none;
-    border-radius: 8px;
+.btn-gradient:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #00c9ff, #64f38c);
 }
 
-.btn-success {
-    border-radius: 25px;
-    padding: 10px 30px;
+
+
+
+.order-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    transition: transform 0.3s ease;
+    width: 100%;
+    max-width: 100%;
 }
 
-/* Responsive tweaks */
-@media (max-width: 576px) {
-    .order-card {
-        padding: 1.5rem;
-    }
+.btn-gradient {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    box-shadow: 0 0 10px #764ba2;
+    transition: 0.3s;
+}
 
-    .card-header {
-        font-size: 1.2rem;
-    }
+.btn-gradient:hover {
+    background: linear-gradient(90deg, #764ba2, #667eea);
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px #764ba2;
+}
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
 }

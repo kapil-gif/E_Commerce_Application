@@ -1,0 +1,36 @@
+.empty-wishlist {
+    min-height: 60vh;
+    padding: 50px 20px;
+    animation: fadeIn 1.2s ease-in-out;
+    background: linear-gradient(to right, #fdfbfb, #ebedee);
+    border-radius: 20px;
+}
+
+.empty-animation {
+    width: 250px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

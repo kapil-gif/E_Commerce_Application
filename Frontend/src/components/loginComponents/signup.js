@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Signup() {
     const [firstname, setFirstName] = useState("");
@@ -13,11 +14,13 @@ export default function Signup() {
     const [mobile_no, setMobile] = useState("");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
-    const [roleId] = useState("2"); // Default role (customer)
+    const [roleId] = useState("2");
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [loading, setLoading] = useState(false); // Loader state
 
     const validatePasswordStrength = (pwd) => {
-        // At least 8 characters, one uppercase, one lowercase, one number, one special char
         const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
         return regex.test(pwd);
     };
@@ -36,6 +39,8 @@ export default function Signup() {
         }
 
         try {
+            setLoading(true); // Start loader
+
             const res = await axios.post("http://localhost:8080/user/signup", {
                 firstname,
                 lastname,
@@ -51,89 +56,99 @@ export default function Signup() {
             });
 
         } catch (err) {
-            const message =
-                err.response?.data?.message || err.message;
-
-            if (message.includes("duplicate")) {
-                toast.error("Email or mobile already registered.");
-            } if (message.code == 'ER_DUP_ENTRY') {
+            const message = err.response?.data?.message || err.message;
+            if (message.includes("duplicate") || message.code === 'ER_DUP_ENTRY') {
                 toast.error("Email or mobile already registered.");
             } else {
-
                 toast.error("Signup failed: " + message);
             }
+        } finally {
+            setLoading(false); // Stop loader
         }
     };
 
     return (
-        <div className="signup-page d-flex justify-content-center align-items-center vh-100">
-            <form onSubmit={handleSubmit} className="signup-form bg-white p-4 rounded shadow">
+        <div className="signup-page d-flex justify-content-center align-items-center vh-100 position-relative">
+            {loading && (
+                <div className="loader-overlay">
+                    <div
+                        className="spinner-border text-primary"
+                        role="status"
+                        style={{ width: "4rem", height: "4rem" }}
+                    >
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            )}
+
+
+            <form
+                onSubmit={handleSubmit}
+                className="signup-form bg-white p-4 rounded shadow"
+                style={{
+                    minWidth: "360px",
+                    opacity: loading ? 0.6 : 1,
+                    pointerEvents: loading ? "none" : "auto",
+                    transition: "opacity 0.3s"
+                }}
+            >
+
+
                 <h2 className="text-center mb-4">Sign Up</h2>
 
+                {/* All your input fields here remain the same */}
+                {/* ... */}
+
                 <div className="mb-3">
-                    <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="First Name"
-                        value={firstname}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        required
-                    />
+                    <input type="text" className="form-control form-control-lg" placeholder="First Name" value={firstname} onChange={(e) => setFirstName(e.target.value)} required />
                 </div>
 
                 <div className="mb-3">
-                    <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="Last Name"
-                        value={lastname}
-                        onChange={(e) => setLastName(e.target.value)}
-                        required
-                    />
+                    <input type="text" className="form-control form-control-lg" placeholder="Last Name" value={lastname} onChange={(e) => setLastName(e.target.value)} required />
                 </div>
 
                 <div className="mb-3">
-                    <input
-                        type="tel"
-                        className="form-control form-control-lg"
-                        placeholder="Mobile number"
-                        value={mobile_no}
-                        onChange={(e) => setMobile(e.target.value)}
-                        required
-                    />
+                    <input type="tel" className="form-control form-control-lg" placeholder="Mobile number" value={mobile_no} onChange={(e) => setMobile(e.target.value)} required />
                 </div>
 
                 <div className="mb-3">
-                    <input
-                        type="email"
-                        className="form-control form-control-lg"
-                        placeholder="Email Address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+                    <input type="email" className="form-control form-control-lg" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
 
-                <div className="mb-3">
+                <div className="mb-3 position-relative">
                     <input
-                        type="password"
-                        className="form-control form-control-lg"
+                        type={showPassword ? "text" : "password"}
+                        className="form-control form-control-lg pe-5"
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
+                    <span
+                        className="position-absolute top-50 end-0 translate-middle-y me-3"
+                        style={{ cursor: "pointer", zIndex: 5 }}
+                        onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </span>
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-4 position-relative">
                     <input
-                        type="password"
-                        className="form-control form-control-lg"
+                        type={showConfirm ? "text" : "password"}
+                        className="form-control form-control-lg pe-5"
                         placeholder="Confirm Password"
                         value={confirm}
                         onChange={(e) => setConfirm(e.target.value)}
                         required
                     />
+                    <span
+                        className="position-absolute top-50 end-0 translate-middle-y me-3"
+                        style={{ cursor: "pointer", zIndex: 5 }}
+                        onClick={() => setShowConfirm((prev) => !prev)}
+                    >
+                        {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                    </span>
                 </div>
 
                 <button type="submit" className="btn btn-primary btn-lg w-100">

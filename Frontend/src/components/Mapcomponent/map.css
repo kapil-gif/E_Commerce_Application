@@ -1,0 +1,28 @@
+.map-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.05);
+}
+
+.location-form-card {
+    border-radius: 16px;
+    background-color: #ffffff;
+    border: none;
+    padding: 20px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out;
+}
+
+.location-form-card:hover {
+    transform: translateY(-4px);
+}
+
+.location-form-card .form-control {
+    border-radius: 10px;
+}
+
+.location-form-card .btn {
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 600;
+}

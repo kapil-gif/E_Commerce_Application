@@ -17,15 +17,17 @@ function Dashboard() {
     const [wishlistProductIds, setWishlistProductIds] = useState([]);
     const [products, setProducts] = useState([]);
     const { searchResults } = useContext(SearchContext);
+    const [loading, setLoading] = useState(false);
 
+    const [cartiteams, setCartiteams] = useState([]);
+    const [productid, setProductid] = useState([]);
     const [page, setPage] = useState(1);
+
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const { setCartCount } = useContext(CartContext);
 
     const navigate = useNavigate();
-
-
 
     const showCustomLoader = () => {
         document.getElementById('custom-loader').style.display = 'flex';
@@ -39,14 +41,9 @@ function Dashboard() {
         let isCalled = false;
         const storedUserId = localStorage.getItem("userId");
         const storedToken = localStorage.getItem("authtoken");
-        const userPermissions = localStorage.getItem("userPermissions");
-
-
-        //console.log("userPermissions in dhasbard :", userPermissions);
 
         if (!storedUserId || !storedToken) {
             navigate("/login");
-
         } else if (!isCalled) {
             isCalled = true;
             fetchInitialData(storedUserId, storedToken);
@@ -70,6 +67,8 @@ function Dashboard() {
                 params: { user_id },
             });
 
+            const cartIds = res.data.products.map(value => value.id);
+            setCartiteams(cartIds);
             setCartCount(res.data.products.length);
         } catch (error) {
             console.error("Error updating cart count:", error);
@@ -83,8 +82,9 @@ function Dashboard() {
 
     const fetchWishlist = async (userId, token) => {
         try {
-            NProgress.start();
-            showCustomLoader();
+
+            setLoading(true);
+
             const res = await axios.get("http://localhost:8080/wishlistproduct/fetchwishlist", {
                 params: { user_id: userId },
                 headers: { Authorization: `Bearer ${token}` }
@@ -96,8 +96,7 @@ function Dashboard() {
         } catch (err) {
             console.error("Wishlist fetch error:", err);
         } finally {
-            NProgress.done();
-            hideCustomLoader();
+            setLoading(false);
         }
     };
 
@@ -105,19 +104,22 @@ function Dashboard() {
         if (isLoading || !hasMore) return;
 
         setIsLoading(true);
-        NProgress.start();
-        showCustomLoader();
+        setLoading(true);
 
         try {
             const res = await axios.get(`http://localhost:8080/products/fetchproducts?page=${page}&limit=6`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            // console.log("fetch product frontend :", res);
 
-            const newProducts = (res.data.allproducts || []).map((item) => ({
-                ...item,
-                img: typeof item.img === "string" ? JSON.parse(item.img) : item.img
-            }));
+            const newProducts = (res.data.allproducts || []).map((item) => {
+                if (item.img && typeof item.img === "string") {
+                    item.img = JSON.parse(item.img);
+                }
+                return item;
+            });
+
+            const productIdsFetched = newProducts.map(p => p.id);
+            setProductid(prev => [...prev, ...productIdsFetched]);
 
             if (newProducts.length === 0) {
                 setHasMore(false);
@@ -129,8 +131,7 @@ function Dashboard() {
             console.error("Error fetching products:", err);
         } finally {
             setIsLoading(false);
-            NProgress.done();
-            hideCustomLoader();
+            setLoading(false);
         }
     };
 
@@ -151,7 +152,6 @@ function Dashboard() {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             toast.info(res.data.message);
-
             updateCartCount();
         } catch (err) {
             if (err.response?.status === 409) {
@@ -221,6 +221,18 @@ function Dashboard() {
 
     return (
         <div className="dashboard-page">
+            {loading && (
+                <div className="loader-overlay">
+                    <div
+                        className="spinner-border text-primary"
+                        role="status"
+                        style={{ width: "4rem", height: "4rem" }}
+                    >
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            )}
+
             <Navbar fixedTop={true} />
 
             <div className="container mt-5 pt-5">
@@ -232,6 +244,8 @@ function Dashboard() {
                     ) : (
                         displayProducts.map((product, index) => {
                             const isInWishlist = wishlistProductIds.includes(product.id.toString());
+                            const isInCart = cartiteams.includes(product.id) && productid.includes(product.id);
+
                             return (
                                 <div className="col-md-4" key={product._id || index}>
                                     <div className="card h-100 shadow-sm position-relative">
@@ -245,7 +259,6 @@ function Dashboard() {
                                                 className="card-img-top product-img"
                                                 alt={product.name} onClick={() => productDetails(product)}
                                             />
-
 
                                             <div
                                                 className="favorite-icon"
@@ -264,15 +277,23 @@ function Dashboard() {
                                         </div>
 
                                         <div className="card-body d-flex flex-column">
-                                            <h5 className="card-title">{product.name}</h5>
+                                            <h5 className="card-title">{product.title}</h5>
                                             <p className="card-text">{product.description || "No description available."}</p>
                                             <p className="card-text"><strong>Price:</strong> ₹{product.price}</p>
                                             <p className="card-text"><strong>Category:</strong> {product.category}</p>
-                                            <div className="mt-auto d-flex justify-content-between">
-                                                <div className="d-flex gap-3 mt-3">
+
+                                            <div className="mt-auto d-flex justify-content-between align-items-center">
+                                                <div className="d-flex gap-2 mt-3">
                                                     <button className="btn btn-outline-primary" onClick={() => addtoCart(product)}>
-                                                        <i className="bi bi-cart-plus me-2"></i> Add to Cart
+                                                        Add to Cart
                                                     </button>
+
+                                                    {isInCart && (
+                                                        <button className="btn btn-success" title="Increase Quantity">
+                                                            <i className="bi bi-cart-plus me-2"></i>
+                                                        </button>
+                                                    )}
+
                                                     <button className="btn btn-primary" onClick={() => moveconfrompage(product)}>
                                                         <i className="bi bi-lightning-fill me-2"></i> Buy Now
                                                     </button>

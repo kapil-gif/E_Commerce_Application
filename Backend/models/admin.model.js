@@ -1,3 +1,4 @@
+
 import pool from "../config/DbConnection.config.js";
 
 // Get all pending users
@@ -22,7 +23,16 @@ export const activateUserById = (userId) => {
     });
 };
 
-
+export const InactivateUserById = (Id) => {
+    const query = "UPDATE user SET status ='Inactive' WHERE id = ?";
+    return new Promise((resolve, reject) => {
+        // console.log("user id model :", Id);
+        pool.query(query, [Id], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+};
 
 export const getRoleNameById = (roleId) => {
     return new Promise((resolve, reject) => {
@@ -36,3 +46,15 @@ export const getRoleNameById = (roleId) => {
     });
 };
 
+export const fetchAllusers = () => {
+    const fetchAlluser = `SELECT * FROM USER WHERE ROLE_ID = 2`;
+    return new Promise((resolve, reject) => {
+        pool.query(fetchAlluser, (err, result) => {
+            if (err) {
+                // console.log("error: ", err);
+                return reject(err);
+            }
+            return resolve(result);
+        });
+    });
+};

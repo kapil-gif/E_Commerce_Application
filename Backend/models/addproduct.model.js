@@ -10,20 +10,20 @@ export function AddNewProduct(data) {
         img,
         thumbnail,
         brand,
-        rating
+
     } = data;
     //console.log("data in model new product :", data.title, data.description, data.category, data.price, data.discountPercentage, data.img, data.thumbnail, data.brand, data.rating);
 
     const newproductquery = `
         INSERT INTO PRODUCTS 
-        (TITLE, description, category, price, discountPercentage, img, thumbnail, brand, rating)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (TITLE, description, category, price, discountPercentage, img, thumbnail, brand)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     return new Promise((resolve, reject) => {
         pool.execute(
             newproductquery,
-            [data.title, data.description, data.category, data.price, data.discountPercentage, data.img, data.thumbnail, data.brand, data.rating],
+            [data.title, data.description, data.category, data.price, data.discountPercentage, data.img, data.thumbnail, data.brand],
             (err, result) => {
                 if (err) {
                     return reject(err);

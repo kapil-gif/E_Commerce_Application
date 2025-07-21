@@ -75,16 +75,50 @@ VALUES (?, ?, ?, ?, ?);`
 }
 
 
-export async function insertorderdata(detials) {
-    const insertdata = `INSERT INTO order_items (
-       order_id,
-        user_id,
-        product_id,
-        product_title,
-        product_img,
-        quantity,
-        price
-    ) VALUES ( ?,?, ?, ?, ?, ?, ?);`;
+export async function insertorderdata(details) {
+    // console.log("details in indert order :", details);
+
+    const insertQuery = `
+        INSERT INTO order_items (
+            order_id,
+            user_id,
+            product_id,
+            product_title,
+            product_img,
+            quantity,
+            price
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+    const selectQuery = `
+      SELECT 
+    orders.id AS order_id,
+    orders.user_id,
+    user.full_name,
+    user.last_name,
+    user.email,
+    user.mobile_no,
+    orders.shipping_address,
+    orders.billing_address,
+    orders.payment_method,
+    orders.total_amount,
+    order_items.product_id,
+    order_items.product_title,
+    order_items.product_img,
+    order_items.quantity,
+    order_items.price,
+    order_items.total,
+    products.title AS product_title,
+    products.price AS product_price,
+    products.img AS product_img,
+    products.brand,
+    products.category
+FROM orders
+JOIN user ON orders.user_id = user.id
+JOIN order_items ON orders.id = order_items.order_id
+JOIN products ON order_items.product_id = products.id
+WHERE orders.id = ?`
+        ;
+
 
     const {
         order_id,
@@ -94,34 +128,38 @@ export async function insertorderdata(detials) {
         product_img,
         quantity,
         price
-    } = detials;
-
-    //    // console.log(`insert  Order Item Details in model:
-    // Order ID: ${order_id}
-    // User ID: ${user_id}
-    // Product ID: ${product_id}
-    // Product Title: ${product_title}
-    // Product Image: ${product_img}
-    // Quantity: ${quantity}
-    // Price per unit: ₹${price}
-    // Total Price (calculated by DB): ₹${quantity * price}
-    // `);
+    } = details;
 
     return new Promise((resolve, reject) => {
+        // Step 1: Insert the order item
         pool.execute(
-            insertdata,
+            insertQuery,
             [order_id, user_id, product_id, product_title, product_img, quantity, price],
             (err, result) => {
                 if (err) {
-                    console.error(" DB Error:", err);
+                    console.error("DB Insert Error:", err);
                     return reject(err);
                 }
-                //  console.log(" Order item inserted:", result);
-                return resolve(result);
+
+                // Step 2: Run the SELECT query for full user + product + order info
+                pool.execute(selectQuery, [order_id], (selectErr, selectResult) => {
+                    if (selectErr) {
+                        console.error("DB Select Error:", selectErr);
+                        return reject(selectErr);
+                    }
+
+                    // Send both insert result and full data
+                    return resolve({
+                        insertResult: result,
+                        fulluserdata: selectResult
+                    });
+                });
             }
         );
     });
 }
+
+
 
 
 export async function fetchsigledataorder(order_id) {
