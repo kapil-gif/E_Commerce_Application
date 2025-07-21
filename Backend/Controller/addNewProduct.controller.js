@@ -28,7 +28,7 @@ export const addnewproduct = async (req, res) => {
             img: JSON.stringify(images), // store as JSON string or join with comma
 
         };
-        console.log("product data in controler : ", data);
+        //onsole.log("product data in controler : ", data);
 
         const response = await AddNewProduct(data);
         res.status(200).json({
@@ -41,7 +41,7 @@ export const addnewproduct = async (req, res) => {
         console.log("errr controlerr :", err);
 
         if (err.code === 'ER_WARN_DATA_OUT_OF_RANGE') {
-            console.log("Discount value is out of allowed range.'");
+            //console.log("Discount value is out of allowed range.'");
             return res.status(400).json({ error: 'Discount value is out of allowed range.' });
 
         }

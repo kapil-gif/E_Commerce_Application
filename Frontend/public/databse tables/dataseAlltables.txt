@@ -1,0 +1,180 @@
+
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+INSERT INTO roles (name) VALUES 
+('admin'),
+('customer'),
+('seller');
+
+
+
+
+CREATE TABLE user (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  full_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
+  mobile_no VARCHAR(15) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+
+  role_id INT NOT NULL DEFAULT 2,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by VARCHAR(100),
+
+  CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+ALTER TABLE user
+ADD COLUMN status ENUM('pending', 'active', 'inactive') DEFAULT 'pending';
+
+
+ CREATE TABLE products (
+  id INT PRIMARY KEY,
+  title VARCHAR(255),
+  description TEXT,
+  category VARCHAR(100),
+  price DECIMAL(10,2),
+  discountPercentage DECIMAL(5,2),
+  img LONGTEXT,             
+  thumbnail LONGTEXT,      
+  brand VARCHAR(100),
+  rating DECIMAL(3,2)
+);
+
+ALTER TABLE products 
+MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT;
+
+
+
+
+CREATE TABLE Cart (
+    CartID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    userId INT,
+    productId INT,
+    quantity INT,
+    price DECIMAL(10, 2),
+    FOREIGN KEY (userId) REFERENCES user(id),
+    FOREIGN KEY (productId) REFERENCES products(id)
+);
+
+
+
+
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') NOT NULL DEFAULT 'pending',
+    payment_status ENUM('unpaid', 'paid', 'refunded') NOT NULL DEFAULT 'unpaid',
+    payment_method ENUM('cod', 'credit_card', 'paypal') NOT NULL,
+    shipping_address TEXT NOT NULL,
+    billing_address TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    -- Foreign key
+    CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT, 
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    product_title VARCHAR(255),
+    product_img VARCHAR(255),	
+    quantity INT NOT NULL DEFAULT 1,
+    price DECIMAL(10, 2) NOT NULL,
+    total DECIMAL(10, 2) GENERATED ALWAYS AS (quantity * price) STORED,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    -- Foreign Keys
+    CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    CONSTRAINT fk_order_items_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    CONSTRAINT fk_order_items_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+
+ CREATE TABLE wishlist (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_user
+    FOREIGN KEY (user_id) REFERENCES user(id)
+    ON DELETE CASCADE,
+
+  CONSTRAINT fk_product
+    FOREIGN KEY (product_id) REFERENCES products(id)
+    ON DELETE CASCADE,
+
+  UNIQUE KEY unique_user_product (user_id, product_id)
+); 
+
+
+
+
+
+
+
+CREATE TABLE permissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+INSERT INTO permissions (name) VALUES
+('View Userlist'),
+('Add Product'),
+('View Products'),
+('View Cart'),
+('View Orders'),
+('View Wishlist');
+
+
+
+
+CREATE TABLE role_permissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    role_id INT NOT NULL,
+    permission_id INT NOT NULL,
+    FOREIGN KEY (permission_id) REFERENCES permissions(id)
+);
+
+  
+
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    order_id VARCHAR(100) NOT NULL,           -- Razorpay order ID
+    payment_id VARCHAR(100),                  -- Razorpay payment ID (after successful payment)
+    signature VARCHAR(255),                   -- Razorpay signature (for verification)
+    amount INT NOT NULL,                      -- Amount in paise
+    currency VARCHAR(10) DEFAULT 'INR',
+    status ENUM('created', 'paid', 'failed') DEFAULT 'created',
+    receipt VARCHAR(100),                     -- Your internal receipt ID
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+
+
+
+CREATE TABLE locations (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  latitude DOUBLE NOT NULL,
+  longitude DOUBLE NOT NULL
+);
+select * from locations;

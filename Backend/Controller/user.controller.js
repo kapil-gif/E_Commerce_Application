@@ -22,7 +22,7 @@ export const login = async (req, res) => {
             return res.status(401).json({ success: false, message: "Invalid email or password" });
         }
 
-        // 🧠 Compare plain password with hashed password
+        //  Compare plain password with hashed password
         //console.log(`password :${password} , user.password : ${user.password}`);
 
         const isMatch = await bcrypt.compare(password, user.password);

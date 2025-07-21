@@ -6,7 +6,7 @@ export const fetchproducts = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
-        console.log("req.user", req.user);
+       // console.log("req.user", req.user);
 
         const allproducts = await fetchdata(offset, limit);
         //console.log("all product fetch constolerr: ", allproducts);

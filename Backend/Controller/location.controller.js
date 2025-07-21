@@ -7,7 +7,7 @@ export const saveLocation = async (req, res) => {
 
     try {
         const { name, latitude, longitude } = req.body;
-        console.log(`controller loaction data name ${name} ,latitude :${latitude}, longitude : ${longitude}`);
+       // console.log(`controller loaction data name ${name} ,latitude :${latitude}, longitude : ${longitude}`);
 
         if (!name || !latitude || !longitude) {
             return res.status(400).json({ message: "All fields are required" });
@@ -16,7 +16,7 @@ export const saveLocation = async (req, res) => {
 
         const responceinsert = await insertLocation(name, latitude, longitude);
         if (responceinsert) {
-            console.log("Insert Result responce :", responceinsert);
+            //console.log("Insert Result responce :", responceinsert);
             res.status(200).json({ success: true, code: 200, message: "Location saved", id: responceinsert.insertId, responce: responceinsert });
         }
     } catch (error) {

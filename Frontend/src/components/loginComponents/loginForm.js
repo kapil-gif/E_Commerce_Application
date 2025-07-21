@@ -39,9 +39,9 @@ function LoginForm() {
             // Navigate based on role
             const role = userRole.toLowerCase().trim();
             if (role === "admin") {
-                navigate("/admin/userlist");
+                navigate("/myshop");
             } else if (role === "customer") {
-                navigate("/dashboard");
+                navigate("/myshop");
             } else {
                 toast.error("Unknown role. Contact support.");
             }

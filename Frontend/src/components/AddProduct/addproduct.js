@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import './addproduct.css';
-
+import Navbar from "../Navbar/Navbar";
 function AddProduct() {
     const token = localStorage.getItem("authtoken");
     const navigate = useNavigate();
@@ -105,7 +104,8 @@ function AddProduct() {
 
     return (
         <>
-            <Navbar />
+            <Navbar fixedTop={true} />
+
             <div className="container mt-5 add-product-container">
                 <div className="card p-4 shadow-lg rounded-4 glass-effect animate-fadeIn">
                     <h2 className="text-center text-gradient mb-4">🛒 Add New Product</h2>

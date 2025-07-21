@@ -5,8 +5,10 @@ dotenv.config();
 
 export const verifyToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
+    //console.log("authheader :", authorization);
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+
+    if (!authHeader || !authHeader.startsWith("Bearer")) {
         return res.status(401).json({ message: "Token missing or invalid" });
     }
 
@@ -15,7 +17,7 @@ export const verifyToken = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // console.log("Decoded token:", decoded);
+       // console.log("Decoded token:", decoded);
 
         req.user = decoded;
 

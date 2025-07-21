@@ -151,7 +151,7 @@ export const insertorder = async (req, res) => {
         const results = [];
 
         for (const item of items) {
-            console.log("temas of insertorder :", item);
+            //console.log("temas of insertorder :", item);
 
             const result = await insertorderdata(item);
             results.push(result); // collect each insert result
