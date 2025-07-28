@@ -1,6 +1,6 @@
 // src/components/Navbar/Navbar.jsx
 import React, { useContext, useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 //import "bootstrap/dist/css/bootstrap.min.css";
 import "./navbar.css";
 import { CartContext } from "./Carts";
@@ -72,7 +72,8 @@ const Navbar = ({ fixedTop }) => {
         }
     };
 
-
+    const location = useLocation();
+    const showsearchBox = location.pathname === '/dashboard'
 
     return (
         <nav className={`navbar navbar-expand-lg ${fixedTop ? "fixed-top" : ""} navbar-dark bg-gradient-custom`}>
@@ -146,7 +147,7 @@ const Navbar = ({ fixedTop }) => {
                         )}
                     </ul>
 
-                    <form className="d-flex me-3" onSubmit={searchBoxsubmit}>
+                    {showsearchBox && (<form className="d-flex me-3" onSubmit={searchBoxsubmit}>
                         <input
                             className="form-control me-2 search-box"
                             type="search"
@@ -156,6 +157,7 @@ const Navbar = ({ fixedTop }) => {
                         />
                         <button className="btn btn-outline-light" type="submit">Search</button>
                     </form>
+                    )}
 
                     <button className="btn btn-sm btn-light me-2 theme-toggle-btn" onClick={changeTheme}>
                         🌗
